@@ -4,10 +4,59 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    /// <summary>
+    /// Player Move speed
+    /// </summary>
     public float moveSpeed;
 
+    /// <summary>
+    /// Player top for checking if hit ceiling
+    /// </summary>
+    public Transform topCheck;
+
+    /// <summary>
+    /// Player base for checking if hit ground
+    /// </summary>
+    public Transform baseCheck;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    public LayerMask groundObject;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    public float jumpForce;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    public float checkRadius;
+
+    /// <summary>
+    /// Player rigibody
+    /// </summary>
     private Rigidbody2D rigibody;
-    private bool facingRight = true;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    private bool is_facingRight = true;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    private bool is_grounded = false;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    private bool is_jumping = false;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
     private float moveDirection;
 
     // Call on spawn
@@ -24,6 +73,12 @@ public class PlayerMovement : MonoBehaviour
 
         //animate
         Animate();
+    }
+
+    private void FixedUpdate()
+    {
+        // Check if touch ground
+        is_grounded = Physics2D.OverlapCircle(baseCheck.position, checkRadius, groundObject);
 
         // Move
         Move();
@@ -32,9 +87,13 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// TODO commentary
     /// </summary>
-    private void Move()
+    private void ProcessInput()
     {
-        rigibody.velocity = new Vector2(moveDirection * moveSpeed, rigibody.velocity.y);
+        moveDirection = Input.GetAxis("Horizontal");
+        if (Input.GetButtonDown("Jump") && is_grounded)
+        {
+            is_jumping = true;
+        }
     }
 
     /// <summary>
@@ -42,11 +101,11 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void Animate()
     {
-        if (moveDirection > 0 && !facingRight)
+        if (moveDirection > 0 && !is_facingRight)
         {
             ChangePlayerDirection();
         }
-        else if (moveDirection < 0 && facingRight)
+        else if (moveDirection < 0 && is_facingRight)
         {
             ChangePlayerDirection();
         }
@@ -55,9 +114,14 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// TODO commentary
     /// </summary>
-    private void ProcessInput()
+    private void Move()
     {
-        moveDirection = Input.GetAxis("Horizontal");
+        rigibody.velocity = new Vector2(moveDirection * moveSpeed, rigibody.velocity.y);
+        if (is_jumping)
+        {
+            rigibody.velocity = Vector2.up * jumpForce;
+        }
+        is_jumping = false;
     }
 
     /// <summary>
@@ -66,7 +130,7 @@ public class PlayerMovement : MonoBehaviour
     /// <returns></returns>
     private void ChangePlayerDirection()
     {
-        facingRight = !facingRight; // Reverse bool
+        is_facingRight = !is_facingRight; // Reverse bool
         transform.Rotate(0f, 180f, 0f);
     }
 }
