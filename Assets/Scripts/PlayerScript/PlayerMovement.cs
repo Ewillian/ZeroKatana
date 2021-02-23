@@ -42,6 +42,11 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// TODO
     /// </summary>
+    private Animator animator;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
     private bool is_facingRight = true;
 
     /// <summary>
@@ -63,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rigibody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     // Call once each frame
@@ -73,6 +79,12 @@ public class PlayerMovement : MonoBehaviour
 
         //animate
         Animate();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            /// Trigger attack animation
+            animator.SetTrigger("attack");
+        }
     }
 
     private void FixedUpdate()
@@ -109,6 +121,9 @@ public class PlayerMovement : MonoBehaviour
         {
             ChangePlayerDirection();
         }
+
+        /// Trigger run animation
+        animator.SetFloat("f_moveSpeed", System.Math.Abs(moveDirection));
     }
 
     /// <summary>
@@ -117,6 +132,13 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         rigibody.velocity = new Vector2(moveDirection * moveSpeed, rigibody.velocity.y);
+
+        // No velocity on stop
+        //if (moveDirection.Equals(0))
+        //{
+        //    rigibody.velocity = new Vector2(0, rigibody.velocity.y);
+        //}
+
         if (is_jumping)
         {
             rigibody.velocity = Vector2.up * jumpForce;
