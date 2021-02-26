@@ -4,10 +4,20 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    #region Public Variable
+
     /// <summary>
     /// Player Move speed
     /// </summary>
     public float moveSpeed;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    public float attackRange;
+
+    public LayerMask enemyLayer;
 
     /// <summary>
     /// Player top for checking if hit ceiling
@@ -33,6 +43,15 @@ public class PlayerMovement : MonoBehaviour
     /// TODO
     /// </summary>
     public float checkRadius;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    public Transform attackPoint;
+
+    #endregion Public Variable
+
+    #region Private Variable
 
     /// <summary>
     /// Player rigibody
@@ -64,6 +83,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private float moveDirection;
 
+    #endregion Private Variable
+
     // Call on spawn
     private void Awake()
     {
@@ -82,8 +103,16 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            /// Trigger attack animation
+            // Trigger attack animation
             animator.SetTrigger("attack");
+
+            // Detect an attack in range of attack
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+
+            foreach(Collider2D enemy in hitEnemies)
+            {
+                Debug.Log("Hit an " + enemy.name);
+            }
         }
     }
 
@@ -154,5 +183,14 @@ public class PlayerMovement : MonoBehaviour
     {
         is_facingRight = !is_facingRight; // Reverse bool
         transform.Rotate(0f, 180f, 0f);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+        {
+            return;
+        }
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }
