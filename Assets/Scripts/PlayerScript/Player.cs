@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
 
     #region Public Variable
@@ -112,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
             foreach(Collider2D enemy in hitEnemies)
             {
                 Debug.Log("Hit an " + enemy.name);
+                enemy.GetComponent<Enemy>().TakeDamage(25);
             }
         }
     }
