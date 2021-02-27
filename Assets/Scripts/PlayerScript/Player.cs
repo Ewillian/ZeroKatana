@@ -81,6 +81,16 @@ public class Player : MonoBehaviour
     /// <summary>
     /// TODO
     /// </summary>
+    private float attackRate = 1f;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    private float nextAttackTime = 0f;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
     private float moveDirection;
 
     #endregion Private Variable
@@ -88,6 +98,7 @@ public class Player : MonoBehaviour
     // Call on spawn
     private void Awake()
     {
+        //Get components
         rigibody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
@@ -95,26 +106,14 @@ public class Player : MonoBehaviour
     // Call once each frame
     void Update()
     {
+
         // Get inputs
         ProcessInput();
 
-        //animate
         Animate();
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            // Trigger attack animation
-            animator.SetTrigger("attack");
+        StartCoroutine(Attack());
 
-            // Detect an attack in range of attack
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
-
-            foreach(Collider2D enemy in hitEnemies)
-            {
-                Debug.Log("Hit an " + enemy.name);
-                enemy.GetComponent<Enemy>().TakeDamage(25);
-            }
-        }
     }
 
     private void FixedUpdate()
@@ -124,6 +123,36 @@ public class Player : MonoBehaviour
 
         // Move
         Move();
+    }
+
+    /// <summary>
+    /// TODO commentary
+    /// </summary>
+    private IEnumerator Attack()
+    {
+        if (Time.time >= nextAttackTime)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                // Trigger attack animation
+                animator.SetTrigger("attack");
+
+                // Delay Hit in relation to animation logic
+                yield return new WaitForSeconds(0.5f);
+
+                // Detect an attack in range of attack
+                Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+
+                // Do damage for each enemy hit
+                foreach (Collider2D enemy in hitEnemies)
+                {
+                    Debug.Log("Hit an " + enemy.name);
+                    enemy.GetComponent<Enemy>().TakeDamage(25);
+                }
+
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
+        }
     }
 
     /// <summary>
@@ -186,6 +215,9 @@ public class Player : MonoBehaviour
         transform.Rotate(0f, 180f, 0f);
     }
 
+    /// <summary>
+    /// TODO commentary
+    /// </summary>
     private void OnDrawGizmosSelected()
     {
         if (attackPoint == null)
