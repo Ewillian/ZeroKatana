@@ -226,4 +226,17 @@ public class Player : MonoBehaviour
         }
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
+
+    /// <summary>
+    /// Camera player
+    /// </summary>
+    public Camera actualCamera;
+
+    private void UpdateCamera()
+    {
+        float newX = rigibody.position.x;
+        float newY = (rigibody.position.y > 0 ? rigibody.position.y : 0);
+
+        actualCamera.transform.position = new Vector3(newX, newY, actualCamera.transform.position.z);
+    }
 }
