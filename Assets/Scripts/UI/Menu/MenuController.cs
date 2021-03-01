@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
@@ -22,7 +21,13 @@ public class MenuController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(index);
+        MenuUserSelection();
+
+        NewGame();
+    }
+
+    private void MenuUserSelection()
+    {
         if (Input.GetAxis("Vertical") != 0)
         {
             if (!keyDown)
@@ -56,6 +61,13 @@ public class MenuController : MonoBehaviour
         {
             keyDown = false;
         }
-        Debug.Log(index);
+    }
+
+    private void NewGame()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) && index == 0)
+        {
+            SceneManager.LoadScene(1);
+        }
     }
 }
