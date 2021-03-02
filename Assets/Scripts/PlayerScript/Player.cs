@@ -8,6 +8,16 @@ public class Player : MonoBehaviour
     #region Public Variable
 
     /// <summary>
+    /// Camera player
+    /// </summary>
+    public Camera actualCamera;
+
+    /// <summary>
+    /// Camera limit
+    /// </summary>
+    public Plane limitCamera;
+
+    /// <summary>
     /// Player Move speed
     /// </summary>
     public float moveSpeed;
@@ -98,9 +108,15 @@ public class Player : MonoBehaviour
     // Call on spawn
     private void Awake()
     {
-        //Get components
+        // Get components
         rigibody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        
+        // limitCamera = GameObject.FindGameObjectWithTag("MapLimit").GetComponent<Plane>();
+        // limitCamera = GetComponent<Plane>();
+        // Debug.Log(limitCamera.normal.x);
+        // Debug.Log(limitCamera.normal.y);
+        // Debug.Log(limitCamera.normal.z);
     }
 
     // Call once each frame
@@ -114,6 +130,15 @@ public class Player : MonoBehaviour
 
         StartCoroutine(Attack());
 
+        UpdateCamera();
+    }
+
+    private void UpdateCamera()
+    {
+        float newX = rigibody.position.x;
+        float newY = (rigibody.position.y > 0 ? rigibody.position.y : 0);
+
+        actualCamera.transform.position = new Vector3(newX, newY, actualCamera.transform.position.z);
     }
 
     private void FixedUpdate()
@@ -225,18 +250,5 @@ public class Player : MonoBehaviour
             return;
         }
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
-
-    /// <summary>
-    /// Camera player
-    /// </summary>
-    public Camera actualCamera;
-
-    private void UpdateCamera()
-    {
-        float newX = rigibody.position.x;
-        float newY = (rigibody.position.y > 0 ? rigibody.position.y : 0);
-
-        actualCamera.transform.position = new Vector3(newX, newY, actualCamera.transform.position.z);
     }
 }
