@@ -26,7 +26,6 @@ public class MenuButton : MonoBehaviour
 			else if (animator.GetBool("is_pressed"))
 			{
 				animator.SetBool("is_pressed", false);
-				//animatorFunctions.disableOnce = true;
 			}
 		}
 		else

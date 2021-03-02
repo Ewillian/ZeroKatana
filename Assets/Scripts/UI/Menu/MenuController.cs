@@ -23,7 +23,7 @@ public class MenuController : MonoBehaviour
     {
         MenuUserSelection();
 
-        NewGame();
+        ButtonActions();
     }
 
     private void MenuUserSelection()
@@ -63,11 +63,15 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    private void NewGame()
+    private void ButtonActions()
     {
         if (Input.GetKeyDown(KeyCode.Return) && index == 0)
         {
             SceneManager.LoadScene(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Return) && index == maxIndex)
+        {
+            Application.Quit();
         }
     }
 }
