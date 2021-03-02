@@ -7,6 +7,7 @@ public class MenuButton : MonoBehaviour
 	[SerializeField] MenuController menuController;
 	Animator animator;
 	[SerializeField] int thisIndex;
+	public bool disableOnce;
 
 	void Start()
     {
@@ -31,6 +32,18 @@ public class MenuButton : MonoBehaviour
 		else
 		{
 			animator.SetBool("is_selected", false);
+		}
+	}
+
+	public void PlaySound(AudioClip buttonSound)
+	{
+		if (!disableOnce)
+		{
+			menuController.audioSource.PlayOneShot(buttonSound);
+		}
+		else
+		{
+			disableOnce = false;
 		}
 	}
 }
