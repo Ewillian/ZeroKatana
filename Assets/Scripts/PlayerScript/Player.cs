@@ -8,16 +8,6 @@ public class Player : MonoBehaviour
     #region Public Variable
 
     /// <summary>
-    /// Camera player
-    /// </summary>
-    public Camera actualCamera;
-
-    /// <summary>
-    /// Camera limit
-    /// </summary>
-    public GameObject limitCamera;
-
-    /// <summary>
     /// Player Move speed
     /// </summary>
     public float moveSpeed;
@@ -111,13 +101,6 @@ public class Player : MonoBehaviour
         // Get components
         rigibody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-
-        // limitCamera = GameObject.Find("MapLimitContainer");
-        // FindGameObjectWithTag("MapLimit").GetComponent<Plane>();
-        // limitCamera = GetComponent<Plane>();
-        // Debug.Log(limitCamera.GetCom .normal.x);
-        // Debug.Log(limitCamera.normal.y);
-        // Debug.Log(limitCamera.normal.z);
     }
 
     // Call once each frame
@@ -130,16 +113,6 @@ public class Player : MonoBehaviour
         Animate();
 
         StartCoroutine(Attack());
-
-        // UpdateCamera();
-    }
-
-    private void UpdateCamera()
-    {
-        float newX = rigibody.position.x;
-        float newY = (rigibody.position.y > 0 ? rigibody.position.y : 0);
-
-        actualCamera.transform.position = new Vector3(newX, newY, actualCamera.transform.position.z);
     }
 
     private void FixedUpdate()
