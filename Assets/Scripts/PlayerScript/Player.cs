@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Camera limit
     /// </summary>
-    public Plane limitCamera;
+    public GameObject limitCamera;
 
     /// <summary>
     /// Player Move speed
@@ -111,10 +111,11 @@ public class Player : MonoBehaviour
         // Get components
         rigibody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        
-        // limitCamera = GameObject.FindGameObjectWithTag("MapLimit").GetComponent<Plane>();
+
+        // limitCamera = GameObject.Find("MapLimitContainer");
+        // FindGameObjectWithTag("MapLimit").GetComponent<Plane>();
         // limitCamera = GetComponent<Plane>();
-        // Debug.Log(limitCamera.normal.x);
+        // Debug.Log(limitCamera.GetCom .normal.x);
         // Debug.Log(limitCamera.normal.y);
         // Debug.Log(limitCamera.normal.z);
     }
@@ -130,7 +131,7 @@ public class Player : MonoBehaviour
 
         StartCoroutine(Attack());
 
-        UpdateCamera();
+        // UpdateCamera();
     }
 
     private void UpdateCamera()
