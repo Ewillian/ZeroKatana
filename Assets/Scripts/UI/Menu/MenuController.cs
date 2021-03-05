@@ -11,11 +11,13 @@ public class MenuController : MonoBehaviour
 
     public int maxIndex = 2;
 
+    public AudioSource audioSource;
+
     //audiosource
 
     void Start()
     {
-        
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
