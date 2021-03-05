@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -98,7 +98,7 @@ public class Player : MonoBehaviour
     // Call on spawn
     private void Awake()
     {
-        //Get components
+        // Get components
         rigibody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
@@ -113,7 +113,6 @@ public class Player : MonoBehaviour
         Animate();
 
         StartCoroutine(Attack());
-
     }
 
     private void FixedUpdate()
@@ -225,18 +224,5 @@ public class Player : MonoBehaviour
             return;
         }
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
-
-    /// <summary>
-    /// Camera player
-    /// </summary>
-    public Camera actualCamera;
-
-    private void UpdateCamera()
-    {
-        float newX = rigibody.position.x;
-        float newY = (rigibody.position.y > 0 ? rigibody.position.y : 0);
-
-        actualCamera.transform.position = new Vector3(newX, newY, actualCamera.transform.position.z);
     }
 }
