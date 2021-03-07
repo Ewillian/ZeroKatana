@@ -22,6 +22,8 @@ public class BasicAI : MonoBehaviour
 
     private Animator animator;
 
+    private bool is_attacking;
+
     /// <summary>
     /// TODO
     /// </summary>
@@ -86,7 +88,7 @@ public class BasicAI : MonoBehaviour
     private void Chase()
     {
 
-        if (transform.position.x > player.position.x && transform.position.x < player.position.x + 2 || transform.position.x < player.position.x && transform.position.x > player.position.x - 2)
+        if (transform.position.x > player.position.x && transform.position.x < player.position.x + 1.5 || transform.position.x < player.position.x && transform.position.x > player.position.x - 1.5)
         {
             // Prevent enemy to continue walking to player 
             animator.SetFloat("speed", 0); // Switch walk animation to idle
@@ -119,24 +121,28 @@ public class BasicAI : MonoBehaviour
 
     private IEnumerator AttackPlayer()
     {
-        if (Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer) != null)
+        Collider2D playerInfo = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);
+        if (playerInfo != null && playerInfo.GetComponent<Player>().is_dead == false)
         {
-            if (Time.time >= nextAttackTime)
+            if (Time.time >= nextAttackTime && is_attacking == false)
             {
+                is_attacking = true;
                 // Trigger attack animation
                 animator.SetTrigger("attack");
 
+                Debug.Log("att");
+
                 // Delay Hit in relation to animation logic
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(1f);
 
                 Collider2D player = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);
                 player.GetComponent<Player>().TakeDamage(attackDamage);
+                is_attacking = false;
 
                 nextAttackTime = Time.time + 1f / attackRate;
             }
             
         }
-        Debug.Log(nextAttackTime);
     }
 
     /// <summary>

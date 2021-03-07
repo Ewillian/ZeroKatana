@@ -81,6 +81,11 @@ public class Player : MonoBehaviour
     /// <summary>
     /// TODO
     /// </summary>
+    public bool is_dead = false;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
     private float attackRate = 1f;
 
     /// <summary>
@@ -225,6 +230,7 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Player slained!");
         animator.SetBool("is_dead", true);
+        is_dead = true;
     }
 
     /// <summary>
