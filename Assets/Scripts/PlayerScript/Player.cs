@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -8,15 +7,8 @@ public class Player : MonoBehaviour
     #region Public Variable
 
     /// <summary>
-    /// Player Move speed
+    /// Layer defining enemy
     /// </summary>
-    public float moveSpeed;
-
-    /// <summary>
-    /// TODO
-    /// </summary>
-    public float attackRange;
-
     public LayerMask enemyLayer;
 
     /// <summary>
@@ -30,68 +22,93 @@ public class Player : MonoBehaviour
     public Transform baseCheck;
 
     /// <summary>
-    /// TODO
-    /// </summary>
-    public LayerMask groundObject;
-
-    /// <summary>
-    /// TODO
-    /// </summary>
-    public float jumpForce;
-
-    /// <summary>
-    /// TODO
-    /// </summary>
-    public float checkRadius;
-
-    /// <summary>
-    /// TODO
+    /// Player's sword center point (empty object transform)
     /// </summary>
     public Transform attackPoint;
+
+    /// <summary>
+    /// Layer defining ground
+    /// </summary>
+    public LayerMask groundObject;
 
     #endregion Public Variable
 
     #region Private Variable
 
     /// <summary>
-    /// Player rigibody
+    /// Player's rigibody
     /// </summary>
     private Rigidbody2D rigibody;
 
     /// <summary>
-    /// TODO
+    /// Player's animator
     /// </summary>
     private Animator animator;
 
     /// <summary>
-    /// TODO
+    /// Boolean checking player facing direction
     /// </summary>
     private bool is_facingRight = true;
 
     /// <summary>
-    /// TODO
+    /// Boolean checking player is grounded
     /// </summary>
     private bool is_grounded = false;
 
     /// <summary>
-    /// TODO
+    /// Boolean checking player is jumping
     /// </summary>
     private bool is_jumping = false;
 
     /// <summary>
-    /// TODO
+    /// Boolean checking if player is attacking
+    /// </summary>
+    private bool is_attacking;
+
+    /// <summary>
+    /// Boolean checking player is dead
+    /// </summary>
+    public bool is_dead = false;
+
+    /// <summary>
+    /// player's attack rate
     /// </summary>
     private float attackRate = 1f;
 
     /// <summary>
-    /// TODO
+    /// player's net attack time
     /// </summary>
     private float nextAttackTime = 0f;
 
     /// <summary>
-    /// TODO
+    /// Player's move direction updating on horizontal input
     /// </summary>
     private float moveDirection;
+
+    /// <summary>
+    /// Player's current health
+    /// </summary>
+    private float currentHealth = 100f;
+
+    /// <summary>
+    /// Player Move speed
+    /// </summary>
+    private float moveSpeed = 8f;
+
+    /// <summary>
+    /// Player can apply damage within this range
+    /// </summary>
+    private float attackRange = 0.4f;
+
+    /// <summary>
+    /// Force use to make jump de player
+    /// </summary>
+    private float jumpForce = 7f;
+
+    /// <summary>
+    /// Radius to check if the player is on ground
+    /// </summary>
+    private float checkRadius = 1f;
 
     #endregion Private Variable
 
@@ -125,14 +142,16 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// TODO commentary
+    /// Trigger attack animation and apply damage to enemy (default 25 damage point).
     /// </summary>
     private IEnumerator Attack()
     {
-        if (Time.time >= nextAttackTime)
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Time.time >= nextAttackTime && is_attacking == false)
             {
+                is_attacking = true;
+
                 // Trigger attack animation
                 animator.SetTrigger("attack");
 
@@ -149,13 +168,16 @@ public class Player : MonoBehaviour
                     enemy.GetComponent<Enemy>().TakeDamage(25);
                 }
 
+                is_attacking = false;
+
                 nextAttackTime = Time.time + 1f / attackRate;
             }
         }
     }
 
     /// <summary>
-    /// TODO commentary
+    /// Update moveDirection value with player input
+    /// | Update is_jumping value
     /// </summary>
     private void ProcessInput()
     {
@@ -167,7 +189,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// TODO commentary
+    /// Animate the player run animation and the player facing direction
     /// </summary>
     private void Animate()
     {
@@ -185,17 +207,11 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// TODO commentary
+    /// Player Movement / Jump logic
     /// </summary>
     private void Move()
     {
         rigibody.velocity = new Vector2(moveDirection * moveSpeed, rigibody.velocity.y);
-
-        // No velocity on stop
-        //if (moveDirection.Equals(0))
-        //{
-        //    rigibody.velocity = new Vector2(0, rigibody.velocity.y);
-        //}
 
         if (is_jumping)
         {
@@ -207,15 +223,39 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Using facingRight variable, change the character front rotation according to player input (left / right).
     /// </summary>
-    /// <returns></returns>
     private void ChangePlayerDirection()
     {
-        is_facingRight = !is_facingRight; // Reverse bool
+        is_facingRight = !is_facingRight;
         transform.Rotate(0f, 180f, 0f);
     }
 
     /// <summary>
-    /// TODO commentary
+    /// Apply damage to the player
+    /// </summary>
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+
+        animator.SetTrigger("hurt");
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    /// <summary>
+    /// Player die
+    /// </summary>
+    public void Die()
+    {
+        Debug.Log("Player slained!");
+        animator.SetBool("is_dead", true);
+        is_dead = true;
+    }
+
+    /// <summary>
+    /// Draw player attack range
     /// </summary>
     private void OnDrawGizmosSelected()
     {
