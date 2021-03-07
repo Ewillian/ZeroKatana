@@ -210,6 +210,7 @@ public class Enemy : MonoBehaviour
         Collider2D playerInfo = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);
         if (playerInfo != null && playerInfo.GetComponent<Player>().is_dead == false)
         {
+            Debug.Log(playerInfo);
             if (Time.time >= nextAttackTime && is_attacking == false)
             {
                 is_attacking = true;
