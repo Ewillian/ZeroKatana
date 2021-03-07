@@ -7,6 +7,11 @@ public class BasicAI : MonoBehaviour
 {
     [SerializeField] Transform player;
 
+    [SerializeField] Transform attackPoint;
+    private float attackRange = 0.5f;
+    private float attackDamage = 25;
+    [SerializeField] LayerMask playerLayer;
+
     private float agroRange;
 
     private float moveSpeed;
@@ -15,16 +20,28 @@ public class BasicAI : MonoBehaviour
 
     private int moveDirection;
 
+    private Animator animator;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    private float attackRate = 1f;
+
     /// <summary>
     /// TODO
     /// </summary>
     private bool is_facingRight = true;
 
+    /// <summary>
+    /// TODO
+    /// </summary>
+    private float nextAttackTime = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
         rigibody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         moveSpeed = 2;
         agroRange = 5;
     }
@@ -35,11 +52,12 @@ public class BasicAI : MonoBehaviour
         BaseAI();
 
         Animate();
+
+        StartCoroutine(AttackPlayer());
     }
 
     private void Animate()
     {
-        Debug.Log(moveDirection);
         if (moveDirection > 0 && !is_facingRight)
         {
             ChangeEnemyDirection();
@@ -58,19 +76,32 @@ public class BasicAI : MonoBehaviour
         {
             Chase();
         }
+        else 
+        {
+            // Switch walk animation to idle
+            animator.SetFloat("speed", 0);
+        }
     }
 
     private void Chase()
     {
-        if (transform.position.x < player.position.x)
+
+        if (transform.position.x > player.position.x && transform.position.x < player.position.x + 2 || transform.position.x < player.position.x && transform.position.x > player.position.x - 2)
+        {
+            // Prevent enemy to continue walking to player 
+            animator.SetFloat("speed", 0); // Switch walk animation to idle
+        }
+        else if(transform.position.x < player.position.x)
         {
             // Enemy is on the left and need to move right
+            animator.SetFloat("speed", moveDirection);
             moveDirection = 1;
             rigibody.velocity = new Vector2(moveSpeed, rigibody.velocity.y);
         }
         else if (transform.position.x > player.position.x)
         {
             // Enemy is on the right and need to move left
+            animator.SetFloat("speed", Math.Abs(moveDirection));
             moveDirection = -1;
             rigibody.velocity = new Vector2(-moveSpeed, rigibody.velocity.y);
         }
@@ -85,4 +116,53 @@ public class BasicAI : MonoBehaviour
         is_facingRight = !is_facingRight; // Reverse bool
         transform.Rotate(0f, 180f, 0f);
     }
+
+    private IEnumerator AttackPlayer()
+    {
+        if (Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer) != null)
+        {
+            if (Time.time >= nextAttackTime)
+            {
+                // Trigger attack animation
+                animator.SetTrigger("attack");
+
+                // Delay Hit in relation to animation logic
+                yield return new WaitForSeconds(0.5f);
+
+                Collider2D player = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);
+                player.GetComponent<Player>().TakeDamage(attackDamage);
+
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
+            
+        }
+        Debug.Log(nextAttackTime);
+    }
+
+    /// <summary>
+    /// TODO commentary
+    /// </summary>
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+        {
+            return;
+        }
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    //Stop chasing player when object is in between
+    //private void CanSeePlayer(float distance)
+    //{
+    //    Vector2 endPos = castPoint.position + Vector3.right * distance;
+    //    RaycastHit2D hit = Physics2D.Linecast(castPoint.position, endPos, 1 << LayerMask.NameToLayer("Platforms"));
+
+    //    if (hit.collider != null)
+    //    {
+    //        if (hit.collider.gameObject.CompareTag("Player"))
+    //        {
+    //            Chase();
+    //        }
+    //    }
+    //}
 }

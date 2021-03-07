@@ -92,6 +92,7 @@ public class Player : MonoBehaviour
     /// TODO
     /// </summary>
     private float moveDirection;
+    private float currentHealth = 100;
 
     #endregion Private Variable
 
@@ -191,12 +192,6 @@ public class Player : MonoBehaviour
     {
         rigibody.velocity = new Vector2(moveDirection * moveSpeed, rigibody.velocity.y);
 
-        // No velocity on stop
-        //if (moveDirection.Equals(0))
-        //{
-        //    rigibody.velocity = new Vector2(0, rigibody.velocity.y);
-        //}
-
         if (is_jumping)
         {
             rigibody.velocity = Vector2.up * jumpForce;
@@ -210,8 +205,26 @@ public class Player : MonoBehaviour
     /// <returns></returns>
     private void ChangePlayerDirection()
     {
-        is_facingRight = !is_facingRight; // Reverse bool
+        is_facingRight = !is_facingRight;
         transform.Rotate(0f, 180f, 0f);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+
+        animator.SetTrigger("hurt");
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        Debug.Log("Player slained!");
+        animator.SetBool("is_dead", true);
     }
 
     /// <summary>
