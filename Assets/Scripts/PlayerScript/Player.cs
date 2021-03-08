@@ -31,6 +31,11 @@ public class Player : MonoBehaviour
     /// </summary>
     public LayerMask groundObject;
 
+    /// <summary>
+    /// Player's current health
+    /// </summary>
+    public float currentHealth = 100f;
+
     #endregion Public Variable
 
     #region Private Variable
@@ -84,11 +89,6 @@ public class Player : MonoBehaviour
     /// Player's move direction updating on horizontal input
     /// </summary>
     private float moveDirection;
-
-    /// <summary>
-    /// Player's current health
-    /// </summary>
-    private float currentHealth = 100f;
 
     /// <summary>
     /// Player Move speed
@@ -146,7 +146,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private IEnumerator Attack()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && is_dead == false)
         {
             if (Time.time >= nextAttackTime && is_attacking == false)
             {
@@ -211,13 +211,16 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Move()
     {
-        rigibody.velocity = new Vector2(moveDirection * moveSpeed, rigibody.velocity.y);
-
-        if (is_jumping)
+        if (is_dead == false)
         {
-            rigibody.velocity = Vector2.up * jumpForce;
+            rigibody.velocity = new Vector2(moveDirection * moveSpeed, rigibody.velocity.y);
+
+            if (is_jumping)
+            {
+                rigibody.velocity = Vector2.up * jumpForce;
+            }
+            is_jumping = false;
         }
-        is_jumping = false;
     }
 
     /// <summary>
@@ -225,8 +228,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void ChangePlayerDirection()
     {
-        is_facingRight = !is_facingRight;
-        transform.Rotate(0f, 180f, 0f);
+        if (is_dead == false)
+        {
+            is_facingRight = !is_facingRight;
+            transform.Rotate(0f, 180f, 0f);
+        }
     }
 
     /// <summary>
